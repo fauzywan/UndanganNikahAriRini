@@ -23,7 +23,20 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  // Izinkan tipe MIME untuk gambar dan video
+  if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Format file tidak didukung! Hanya gambar dan video yang diperbolehkan.'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 } // Pastikan limit size cukup besar untuk video (contoh: 50MB)
+});
 
 
 // ==========================================
