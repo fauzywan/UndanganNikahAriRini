@@ -51,7 +51,7 @@ router.post('/admin/photos/upload', upload.array('photos', 20), async (req, res)
 
     // Siapkan array data untuk disimpan ke MongoDB
     const photoData = req.files.map(file => ({
-      url: `/uploads/${file.filename}`, // URL lokal untuk diakses frontend
+      url: `uploads/${file.filename}`, // URL lokal untuk diakses frontend
       role: 'gallery',
       source: 'file'
     }));
