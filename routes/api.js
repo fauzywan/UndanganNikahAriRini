@@ -8,6 +8,7 @@ import path from 'path';
 
 // 1. Import router photo.js (Pastikan path-nya benar, misal satu folder di /routes)
 import photoRoutes from './photo.js'; 
+import StoryRoutes from './story.js';
 import axios from 'axios';
 import multer from 'multer';
 
@@ -17,6 +18,7 @@ const router = express.Router();
 // Karena di server.js sudah memakai awalan '/api', maka route di photo.js 
 // otomatis menjadi /api/admin/photos/... (Sesuai dengan frontend!)
 router.use(photoRoutes);
+router.use(StoryRoutes);
 
 
 // ==========================================
