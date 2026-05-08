@@ -1,7 +1,7 @@
 // routes/story.js (atau tambahkan di file router yang sudah ada)
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Story = require('../models/Story');
+import Story from '../models/Story.js';
 
 // GET: Ambil semua cerita (diurutkan berdasarkan 'order' dari yang terkecil)
 router.get('/admin/stories', async (req, res) => {
@@ -50,4 +50,4 @@ router.delete('/admin/stories/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -8,7 +8,7 @@ import path from 'path';
 
 // 1. Import router photo.js (Pastikan path-nya benar, misal satu folder di /routes)
 import photoRoutes from './photo.js'; 
-import StoryRoutes from './story.js';
+import StoryRoutes from './story.js'
 import axios from 'axios';
 import multer from 'multer';
 
