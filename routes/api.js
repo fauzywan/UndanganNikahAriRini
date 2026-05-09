@@ -9,6 +9,8 @@ import path from 'path';
 // 1. Import router photo.js (Pastikan path-nya benar, misal satu folder di /routes)
 import photoRoutes from './photo.js'; 
 import StoryRoutes from './story.js'
+import UploadSupabaseRoutes from './uploadSupabase.js'
+import MusicRoutes from './music.js'
 import axios from 'axios';
 import multer from 'multer';
 
@@ -19,6 +21,8 @@ const router = express.Router();
 // otomatis menjadi /api/admin/photos/... (Sesuai dengan frontend!)
 router.use(photoRoutes);
 router.use(StoryRoutes);
+router.use(UploadSupabaseRoutes)
+router.use(MusicRoutes)
 
 
 // ==========================================
@@ -71,6 +75,22 @@ router.post('/admin/config', async (req, res) => {
   }
 });
 
+
+router.get('/config', async (req, res) => {
+  try {
+    const config = await Config.findOne();
+    const guests = await Guest.find({
+      hasRSVPed: true,
+    });
+    const photos = await Photo.find();
+    const photosData = photos.map(p => { return { url: p.url, role: p.role } })
+    if (!config) return res.status(404).json({ message: 'Konfigurasi belum disetup' });
+    res.json({config, photos:photosData, guests});
+  } catch (error) {
+    res.status(500).json({ message: 'Terjadi kesalahan server', error });
+  }
+});
+
 router.get('/guestbook', async (req, res) => {
   try {
     // Cari tamu yang field message-nya ada dan tidak kosong
@@ -85,30 +105,6 @@ router.get('/guestbook', async (req, res) => {
     res.status(500).json({ message: "Gagal mengambil buku tamu", error });
   }
 });
-router.get('/config', async (req, res) => {
-  try {
-    const config = await Config.findOne();
-    const guests = await Guest.find({
-      hasRSVPed: true,
-    });
-    const photosRaw = await Photo.find();
-    const photos = photosRaw.map(p => {
-        if(p.source== 'file'){
-            p.url = process.env.BASE_URL + p.url
-        }
-        return p
-    })
-    // hanya mereturn url dan rolesaja
-    const photosData = photos.map(p => { return { url: p.url, role: p.role } })
-    if (!config) return res.status(404).json({ message: 'Konfigurasi belum disetup' });
-    res.json({config, photos:photosData, guests});
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: 'Terjadi kesalahan server', error });
-  }
-});
-
-
 // ==========================================
 // ROUTE GUESTS (Tetap sama seperti milik Kakak)
 // ==========================================
@@ -197,51 +193,5 @@ router.post('/rsvp/:slug', async (req, res) => {
   }
 });
 
-const musicStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/uploads/'), // Kita pakai folder uploads yang sama
-  filename: (req, file, cb) => {
-    cb(null, 'bgm-'+  path.extname(file.originalname)); 
-  }
-});
 
-// Filter khusus agar yang bisa diupload cuma file audio
-const audioFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('audio/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Format tidak didukung! Harus file audio (MP3/WAV).'), false);
-  }
-};
-
-const uploadMusic = multer({ storage: musicStorage, fileFilter: audioFilter });
-
-router.post('/admin/config/music', uploadMusic.single('musicFile'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'Tidak ada file musik yang diunggah' });
-    }
-
-    // Path lokal dari file yang baru diupload
-    const bgmUrl = `/uploads/${req.file.filename}`;
-    // Menghapus music yang ada dulu kalau ada
-      const oldMusicStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/uploads/'), // Kita pakai folder uploads yang sama
-  filename: (req, file, cb) => {
-    cb(null, 'bgm-'+  path.extname(file.originalname)); 
-  }
-});
-
-
-    const config = await Config.findOne();
-    if(!config) return res.status(404).json({ message: "Konfigurasi belum disetup" });
-
-    // Update HANYA bgmUrl menggunakan $set
-    await Config.updateOne({}, { $set: { bgmUrl } });
-
-    res.json({ message: 'Musik berhasil diunggah dan disimpan!', bgmUrl });
-  } catch(error) {
-    console.error(error);
-    res.status(500).json({ message: 'Gagal mengunggah musik', error });
-  }
-});
 export default router;
