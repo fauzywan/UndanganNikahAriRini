@@ -13,6 +13,7 @@ import UploadSupabaseRoutes from './uploadSupabase.js'
 import MusicRoutes from './music.js'
 import axios from 'axios';
 import multer from 'multer';
+import visitRoutes from './visit.js';
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.use(photoRoutes);
 router.use(StoryRoutes);
 router.use(UploadSupabaseRoutes)
 router.use(MusicRoutes)
+router.use('/analytics',visitRoutes);
 
 
 // ==========================================

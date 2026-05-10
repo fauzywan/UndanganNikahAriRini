@@ -51,7 +51,7 @@ router.post('/config/music', upload.single('musicFile'), async (req, res) => {
     const fileUrl = publicUrlData.publicUrl;
 
     // 5. Update Database MongoDB
-    await Config.updateOne(
+await Config.updateOne(
       {}, 
       { $set: { "bgmUrl": fileUrl } },
       { upsert: true }

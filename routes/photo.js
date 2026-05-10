@@ -112,7 +112,6 @@ router.post('/admin/photos', async (req, res) => {
     if (!url) return res.status(400).json({ message: 'URL wajib diisi' });
 
     const finalUrl = convertGoogleDriveUrl(url.trim());
-    console.log(finalUrl)
     const newPhoto = new Photo({
       url: finalUrl,
       role: role || 'gallery',
