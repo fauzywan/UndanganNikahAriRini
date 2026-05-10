@@ -1,10 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
 import Config from '../models/Config.js'; 
 
-dotenv.config();
 const router = express.Router();
 
 const supabase = createClient(

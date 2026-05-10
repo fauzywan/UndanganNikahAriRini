@@ -2,10 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
 import Photo from '../models/Photo.js';
 
-dotenv.config();
 const router = express.Router();
 
 // ==========================================

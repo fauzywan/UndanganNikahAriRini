@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import Config from './models/Config.js'; // Sesuaikan path jika model ada di dalam folder models

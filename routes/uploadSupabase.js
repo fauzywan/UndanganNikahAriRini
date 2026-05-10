@@ -2,10 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import { createClient } from '@supabase/supabase-js';
 import path from 'path';
-import dotenv from 'dotenv';
 
 // Panggil konfigurasi .env
-dotenv.config();
 
 const router = express.Router();
 
